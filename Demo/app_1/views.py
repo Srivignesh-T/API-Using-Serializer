@@ -1,10 +1,11 @@
+from django.http import Http404
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import APIView
 from rest_framework import status
 from .models import Employee
 from .serializer import EmployeeSerializer
-
+# from django.db.models import Q
 
 class EmployeeDetails(APIView):
 
@@ -27,8 +28,7 @@ class EmployeeInfo(APIView):
             data = Employee.objects.get(id=id)
 
         except Employee.DoesNotExist:
-            msg = {"msg":"Emp Not Found"}
-            return Response(msg, status=status.HTTP_404_NOT_FOUND)
+            raise Http404
 
         serial = EmployeeSerializer(data)
         return Response(serial.data, status=status.HTTP_200_OK)
@@ -38,8 +38,7 @@ class EmployeeInfo(APIView):
             data = Employee.objects.get(id=id)
 
         except Employee.DoesNotExist:
-            msg = {"msg": "Emp Not Found"}
-            return Response(msg, status=status.HTTP_404_NOT_FOUND)
+            raise Http404
         serial = EmployeeSerializer(data, data=request.data)
         if serial.is_valid():
             serial.save()
@@ -51,8 +50,7 @@ class EmployeeInfo(APIView):
             data = Employee.objects.get(id=id)
 
         except Employee.DoesNotExist:
-            msg = {"msg": "Emp Not Found"}
-            return Response(msg, status=status.HTTP_404_NOT_FOUND)
+            raise Http404
         serial = EmployeeSerializer(data, data=request.data, partial=True)
         if serial.is_valid():
             serial.save()
@@ -63,8 +61,7 @@ class EmployeeInfo(APIView):
         try:
             data = Employee.objects.get(id=id)
         except Employee.DoesNotExist:
-            msg = {"msg": "Emp Not Found"}
-            return Response(msg, status=status.HTTP_404_NOT_FOUND)
+            raise Http404
         data.delete()
         return Response({"msg":"Record Deleted"}, status=status.HTTP_204_NO_CONTENT)
 
